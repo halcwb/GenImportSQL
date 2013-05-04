@@ -34,9 +34,9 @@ namespace TestProject
             foreach (string fileName in FlatFileReader.GetAllFileNames(tempPath))
             {
                 var gStandardReader = new GStandardSchemaReader(tempPath, fileName);
-                var name = gStandardReader.GetName();
+                var name = fileName + "_" + gStandardReader.GetName();
                 var columnInfos = gStandardReader.GetFlatFileColumnInfo();
-                using (var sqlBulkImport = new SqlBulkImport("Server=localhost;Database=testdb2;Trusted_Connection=True;"))
+                using (var sqlBulkImport = new SqlBulkImport("Server=localhost;Database=GStandDb;Trusted_Connection=True;"))
                 {
                     var dt = sqlBulkImport.CreateTable(name);
                     sqlBulkImport.CreateColumns(dt, columnInfos);
