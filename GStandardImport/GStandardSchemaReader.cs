@@ -13,13 +13,17 @@ namespace TestProject
 {
     public class GStandardSchemaReader
     {
+        private const string CachedFiles = "cached_files";
         private string contents;
 
         public GStandardSchemaReader(string tempPath, string fileName)
         {
+            if (!File.Exists(Path.Combine(tempPath, CachedFiles)))
+                Directory.CreateDirectory(Path.Combine(tempPath, CachedFiles));
+
             using (var client = new WebClient())
             {
-                var cachedFile = Path.Combine(tempPath, "cached_files", fileName + ".html");
+                var cachedFile = Path.Combine(tempPath, CachedFiles, fileName + ".html");
                 if (!File.Exists(cachedFile))
                 {
                     string s = client.DownloadString(@"http://www.z-index.nl/g-standaard/beschrijvingen/technisch/Bestanden/bestand?bestandsnaam="+fileName);
