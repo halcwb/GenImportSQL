@@ -68,7 +68,7 @@ namespace TestProject
                 var positions = metaDataMatches[4].Groups[1].ToString();
                 var posstart = int.Parse(positions.Split('-')[0]);
                 var posend = int.Parse(positions.Split('-')[1]);
-                dataInfoList.Add(new FlatFileColumnInfo() { ColName = colname, Length = length, PosStart = posstart, PosEnd = posend });                
+                dataInfoList.Add(new FlatFileColumnInfo() { ColName = colname, Length = length, PosStart = posstart, PosEnd = posend});                
             }
             return dataInfoList;
         }

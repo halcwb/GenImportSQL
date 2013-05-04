@@ -10,6 +10,8 @@ namespace TestProject
 {
     public static class FlatFileReader
     {
+        private static IList<string> _includeList = new List<string>{"BST715T","BST004T","BST031T","BST020T","BST051T","BST050T","BST711T","BST750T","BST720T","BST725T","BST902T",};
+
         public static void ReadFlatFileInToDataset(string path, DataTable dt, string tableName, List<FlatFileColumnInfo> columnInfoList)
         {
             using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -38,7 +40,7 @@ namespace TestProject
             List<string> fileNames = new List<string>();
             foreach (string fileName in Directory.GetFiles(path, "*").Select(Path.GetFileName))
             {
-                fileNames.Add(fileName);                   
+                if (_includeList.Any(f => f == fileName)) fileNames.Add(fileName);
             }
             return fileNames;
         }
