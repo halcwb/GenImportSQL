@@ -43,7 +43,7 @@ namespace TestProject
                         {
                             if (line == null) continue;
                             var data = line.Substring(dataInfo.PosStart - 1, dataInfo.PosEnd - (dataInfo.PosStart - 1));
-                            dr[dataInfo.ColName] = data;
+                            dr[dataInfo.ColName] = data.Trim();
                         }
                         dt.Rows.Add(dr);
                     }
