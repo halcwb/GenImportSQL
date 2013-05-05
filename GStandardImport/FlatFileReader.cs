@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,10 @@ namespace TestProject
 {
     public static class FlatFileReader
     {
-        private static readonly IList<string> _includeList = new List<string>{"BST715T","BST004T","BST031T","BST020T","BST051T","BST050T","BST711T","BST750T","BST720T","BST725T","BST902T", "BST500T"};
+        private static IEnumerable<string> GetIncludeList()
+        {
+            return ((GStandardImportConfigurationSection)ConfigurationManager.GetSection("Import")).GStandardFileList.FileList.Split(',').ToList();
+        }
 
         public static void ReadFlatFileInToDataset(string path, DataTable dt, string tableName, List<FlatFileColumnInfo> columnInfoList)
         {
@@ -49,7 +53,8 @@ namespace TestProject
 
         public static List<string> GetAllFileNames(string path)
         {
-            return Directory.GetFiles(path, "*").Select(Path.GetFileName).Where(fileName => _includeList.Any(f => f == fileName)).ToList();
+            var include = GetIncludeList();
+            return Directory.GetFiles(path, "*").Select(Path.GetFileName).Where(fileName => include.Any(f => f == fileName)).ToList();
         }
     }
 }
