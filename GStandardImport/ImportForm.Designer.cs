@@ -42,7 +42,7 @@
             this.ImportButton.TabIndex = 0;
             this.ImportButton.Text = "Start Import";
             this.ImportButton.UseVisualStyleBackColor = true;
-            this.ImportButton.Click += new System.EventHandler(this.button1_Click);
+            this.ImportButton.Click += new System.EventHandler(this.FilePathButtonClick);
             // 
             // FolderLbl
             // 

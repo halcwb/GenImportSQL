@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TestProject
 {
     public class GStandardSchemaReader
     {
         private const string CachedFiles = "cached_files";
-        private string contents;
+        private readonly string _contents;
 
         public GStandardSchemaReader(string tempPath, string fileName)
         {
@@ -26,16 +21,16 @@ namespace TestProject
                 var cachedFile = Path.Combine(tempPath, CachedFiles, fileName + ".html");
                 if (!File.Exists(cachedFile))
                 {
-                    string s = client.DownloadString(@"http://www.z-index.nl/g-standaard/beschrijvingen/technisch/Bestanden/bestand?bestandsnaam="+fileName);
+                    var s = client.DownloadString(@"http://www.z-index.nl/g-standaard/beschrijvingen/technisch/Bestanden/bestand?bestandsnaam="+fileName);
                     File.WriteAllText(cachedFile, s);
                 }
-                contents = File.ReadAllText(cachedFile);
+                _contents = File.ReadAllText(cachedFile);
             }
         }
 
         public string GetName()
         {
-            var match = Regex.Match(contents, @"Bestand\s\d\d\d(.*?)\<", RegexOptions.IgnoreCase);
+            var match = Regex.Match(_contents, @"Bestand\s\d\d\d(.*?)\<", RegexOptions.IgnoreCase);
 
             var name = match.Groups[1].ToString().Trim();
             name = name.Replace(' ', '_');
@@ -47,7 +42,7 @@ namespace TestProject
         public List<FlatFileColumnInfo> GetFlatFileColumnInfo()
         {
 
-            var matches = Regex.Matches(contents, @"\<tr\sclass=""(odd|even)"".*?\>(.*?)<\/tr\>", RegexOptions.Singleline);
+            var matches = Regex.Matches(_contents, @"\<tr\sclass=""(odd|even)"".*?\>(.*?)<\/tr\>", RegexOptions.Singleline);
             var dataInfoList = new List<FlatFileColumnInfo>();
             for (int i = 0; i < matches.Count; i++)
             {

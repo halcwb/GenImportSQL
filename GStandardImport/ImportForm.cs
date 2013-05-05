@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace TestProject
 {
@@ -22,16 +11,16 @@ namespace TestProject
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void FilePathButtonClick(object sender, EventArgs e)
         {
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                this.folderLocationLabel.Text = folderBrowserDialog.SelectedPath;
+                folderLocationLabel.Text = folderBrowserDialog.SelectedPath;
             }
 
-            string tempPath = folderBrowserDialog.SelectedPath;
+            var tempPath = folderBrowserDialog.SelectedPath;
 
-            foreach (string fileName in FlatFileReader.GetAllFileNames(tempPath))
+            foreach (var fileName in FlatFileReader.GetAllFileNames(tempPath))
             {
                 var gStandardReader = new GStandardSchemaReader(tempPath, fileName);
                 var name = fileName + "_" + gStandardReader.GetName();

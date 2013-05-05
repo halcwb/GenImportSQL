@@ -3,29 +3,41 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestProject
 {
     public static class FlatFileReader
     {
-        private static IList<string> _includeList = new List<string>{"BST715T","BST004T","BST031T","BST020T","BST051T","BST050T","BST711T","BST750T","BST720T","BST725T","BST902T",};
+        private static readonly IList<string> _includeList = new List<string>{"BST715T","BST004T","BST031T","BST020T","BST051T","BST050T","BST711T","BST750T","BST720T","BST725T","BST902T", "BST500T"};
 
         public static void ReadFlatFileInToDataset(string path, DataTable dt, string tableName, List<FlatFileColumnInfo> columnInfoList)
         {
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            try
             {
-                using (StreamReader sr = new StreamReader(fs))
+                ReadFile(path, dt, columnInfoList);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Could not read file: " + path + dt,e);
+            }
+        }
+
+        private static void ReadFile(string path, DataTable dt, List<FlatFileColumnInfo> columnInfoList)
+        {
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                using (var sr = new StreamReader(fs))
                 {
                     while (!sr.EndOfStream)
                     {
                         var line = sr.ReadLine();
-                        if (line.Length == 1) continue;
+                        if (line != null && line.Length == 1) continue;
 
                         var dr = dt.NewRow();
-                        foreach (FlatFileColumnInfo dataInfo in columnInfoList)
+                        foreach (var dataInfo in columnInfoList)
                         {
+                            if (line == null) continue;
                             var data = line.Substring(dataInfo.PosStart - 1, dataInfo.PosEnd - (dataInfo.PosStart - 1));
                             dr[dataInfo.ColName] = data;
                         }
@@ -37,12 +49,7 @@ namespace TestProject
 
         public static List<string> GetAllFileNames(string path)
         {
-            List<string> fileNames = new List<string>();
-            foreach (string fileName in Directory.GetFiles(path, "*").Select(Path.GetFileName))
-            {
-                if (_includeList.Any(f => f == fileName)) fileNames.Add(fileName);
-            }
-            return fileNames;
+            return Directory.GetFiles(path, "*").Select(Path.GetFileName).Where(fileName => _includeList.Any(f => f == fileName)).ToList();
         }
     }
 }
