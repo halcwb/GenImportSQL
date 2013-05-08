@@ -30,6 +30,7 @@ namespace TestProject
                     sqlBulkImport.ImportTable(dt, name);
                 }
             }
+            Close();
         }
 
         private string SetFolderLocation()

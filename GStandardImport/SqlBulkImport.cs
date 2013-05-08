@@ -51,8 +51,15 @@ namespace TestProject
             ds.Tables[name].Columns.Add(dcid);
 
             var createtable = new SqlCommand("CREATE TABLE " + name + " (id int)", _sqlConnection);
-            createtable.ExecuteNonQuery();
-            return ds.Tables[name];
+            try
+            {
+                createtable.ExecuteNonQuery();
+
+            }
+            catch (Exception)
+            {
+                
+            } return ds.Tables[name];
         }
 
         public void CreateColumns(DataTable dt, List<FlatFileColumnInfo> columnInfos)
@@ -63,7 +70,15 @@ namespace TestProject
                 dt.Columns.Add(dc);
 
                 var addcolumn = new SqlCommand("ALTER TABLE " + dt.TableName + " ADD " + columnInfo.ColName + " varchar(" + (columnInfo.Length > 0 ? columnInfo.Length : 1) + ")", _sqlConnection);
-                addcolumn.ExecuteNonQuery();
+                try
+                {
+                    addcolumn.ExecuteNonQuery();
+
+                }
+                catch (Exception)
+                {
+
+                }
             }   
         }
 
