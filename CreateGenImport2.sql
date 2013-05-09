@@ -12,9 +12,9 @@ BEGIN
 END
 GO
 
-IF (OBJECT_ID(N'dbo.GroupGeneric', N'U') IS NOT NULL)
+IF (OBJECT_ID(N'dbo.GroupGenericProduct', N'U') IS NOT NULL)
 BEGIN
-	DROP TABLE dbo.GroupGeneric
+	DROP TABLE dbo.GroupGenericProduct
 END
 GO
 
@@ -72,35 +72,6 @@ SELECT
 	*
 FROM GenericSubstance gs
 
-
-SELECT DISTINCT
-	gd.GNK,
-	gd.GroupCode INTO GroupGeneric
-FROM GStandDb gd
-
-ALTER TABLE dbo.GroupGeneric ALTER COLUMN
-GNK varchar(6) NOT NULL
-GO
-
-ALTER TABLE dbo.GroupGeneric ALTER COLUMN
-GroupCode varchar(4) NOT NULL
-GO
-
-ALTER TABLE dbo.GroupGeneric
-ADD CONSTRAINT PK_GroupGeneric PRIMARY KEY (GNK, GroupCode)
-GO
-
-ALTER TABLE dbo.GroupGeneric
-ADD CONSTRAINT FK_Group FOREIGN KEY (GroupCode) REFERENCES TherapyGroup (GroupCode)
-GO
-
-ALTER TABLE dbo.GroupGeneric
-ADD CONSTRAINT FK_Generic FOREIGN KEY (GNK) REFERENCES GenericSubstance (GNK)
-GO
-
-SELECT
-	*
-FROM GroupGeneric gg
 
 
 SELECT DISTINCT
@@ -176,4 +147,38 @@ GO
 ALTER TABLE dbo.GenericProduct
 ADD CONSTRAINT FK_GenericShapeRoute FOREIGN KEY (GNK, ShapeId, RouteId) REFERENCES GenericShapeRoute (GNK, ShapeId, RouteId)
 GO
+
+SELECT DISTINCT
+	gd.GPK,
+	gd.GNK,
+	gd.GroupCode INTO GroupGenericProduct
+FROM GStandDb gd
+
+ALTER TABLE dbo.GroupGenericProduct ALTER COLUMN
+GPK varchar(8) NOT NULL
+GO
+
+ALTER TABLE dbo.GroupGenericProduct ALTER COLUMN
+GNK varchar(6) NOT NULL
+GO
+
+ALTER TABLE dbo.GroupGenericProduct ALTER COLUMN
+GroupCode varchar(4) NOT NULL
+GO
+
+ALTER TABLE dbo.GroupGenericProduct
+ADD CONSTRAINT PK_GroupGeneric PRIMARY KEY (GPK, GNK, GroupCode)
+GO
+
+ALTER TABLE dbo.GroupGenericProduct
+ADD CONSTRAINT FK_Group FOREIGN KEY (GroupCode) REFERENCES TherapyGroup (GroupCode)
+GO
+
+ALTER TABLE dbo.GroupGenericProduct
+ADD CONSTRAINT FK_GenericProduct FOREIGN KEY (GPK, GNK) REFERENCES GenericProduct (GPK, GNK)
+GO
+
+SELECT
+	*
+FROM GroupGenericProduct ggp
 

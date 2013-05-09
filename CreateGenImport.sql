@@ -6,12 +6,6 @@ BEGIN
 END
 GO
 
-IF (OBJECT_ID(N'dbo.GenericProduct', N'U') IS NOT NULL)
-BEGIN
-	DROP TABLE dbo.GenericProduct
-END
-GO
-
 IF OBJECT_ID(N'dbo.GetTerm', N'FN') IS NOT NULL
 	DROP FUNCTION dbo.GetTerm
 GO
@@ -91,9 +85,20 @@ GO
 
 -- Create table with generic products
 SELECT DISTINCT
-	btig.Groepkode_GRPINP GroupCode,
-	btig.Groepnaam_GRPNAM GroupName,
-	btgn.GeneriekeNaamKode_GNK_GNGNK GNK,
+	bth.HandelsProduktKode_HPK_HPKODE HPK,
+	bth.Merkstamnaam_MSNAAM Brand,
+	bth.Firmastamnaam_FSNAAM Producer,
+	dbo.GetName(bth.Handelsproduktnaamnummer_HPNAMN) TradeName,
+	(SUBSTRING(btgp.ATC_code_ATCODE, 1, 1)) ATC1,
+	btag1.ATC_Nederlandse_omschrijving_ATOMSN AnatomicalMain,
+	(SUBSTRING(btgp.ATC_code_ATCODE, 1, 3)) ATC2,
+	btag2.ATC_Nederlandse_omschrijving_ATOMSN TherapeuticMain,
+	(SUBSTRING(btgp.ATC_code_ATCODE, 1, 4)) ATC3,
+	btag3.ATC_Nederlandse_omschrijving_ATOMSN TherapeuticSub,
+	(SUBSTRING(btgp.ATC_code_ATCODE, 1, 5)) ATC4,
+	btag4.ATC_Nederlandse_omschrijving_ATOMSN Pharmacological,
+	(SUBSTRING(btgp.ATC_code_ATCODE, 1, 8)) ATC5,
+	btag5.ATC_Nederlandse_omschrijving_ATOMSN Substance,
 	btgn.Generieke_naam_GNGNAM GenericLong,
 	(SELECT TOP 1
 		btgn1.Generieke_naam_GNGNAM
@@ -128,31 +133,17 @@ JOIN GStandDb.dbo.BST701T_Ingegeven_samenstellingen btis
 	ON bth.HandelsProduktKode_HPK_HPKODE = btis.HandelsProduktKode_HPK_HPKODE AND btis.Aanduiding_werkzaamhulpstof_WH_GNMWHS = 'W'
 JOIN GStandDb.dbo.BST750T_Generieke_namen btgn
 	ON btis.GeneriekeNaamKode_GNK_GNGNK = btgn.GeneriekeNaamKode_GNK_GNGNK
-JOIN GStandDb.dbo.BST500T_Informatorium_groepen btig
-	ON (bth.FTK_1_GRP001 = btig.Groepkode_GRPINP OR
-	bth.FTK_2_GRP002 = btig.Groepkode_GRPINP OR
-	bth.FTK_3_GRP003 = btig.Groepkode_GRPINP OR
-	bth.FTK_4_GRP004 = btig.Groepkode_GRPINP OR
-	bth.FTK_5_GRP005 = btig.Groepkode_GRPINP)
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag ON btag.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag1 ON btag1.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1)) 
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag2 ON btag2.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 3)) 
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag3 ON btag3.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 4)) 
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag4 ON btag4.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 5)) 
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag5 ON btag5.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 8)) 
 
 WHERE btgp.Mutatiekode_MUTKOD != '1' AND
 btis.Mutatiekode_MUTKOD != '1' AND
 btgn.Mutatiekode_MUTKOD != '1' AND
 btvp.Mutatiekode_MUTKOD != '1' AND
-btig.Mutatiekode_MUTKOD != '1' AND
 bth.Mutatiekode_MUTKOD != '1'
 AND NOT dbo.GetShape(btgp.Farmaceutische_vorm_code_GPKTVR) = 'NIET VAN TOEPASSING'
-ORDER BY GPK
-
-
-
-
---ALTER TABLE dbo.GenericProduct
---ALTER COLUMN ID varchar(8) NOT NULL
-
---ALTER TABLE dbo.GenericProduct WITH CHECK ADD CONSTRAINT PK__GenericProduct_ID
---PRIMARY KEY (ID)
-
---SELECT
---	*
---FROM dbo.GenericProduct gp
+ORDER BY AnatomicalMain, TherapeuticMain, TherapeuticSub, Pharmacological, Substance, Shape, [ROUTE], GenericProductName, PrescriptionName, TradeName

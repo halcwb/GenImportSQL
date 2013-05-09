@@ -37,5 +37,6 @@ EXEC dbo.CreateIndexForTableField 'BST050T_Voorschrijfproducten_PRK', 'PRK_code_
 EXEC dbo.CreateIndexForTableField 'BST701T_Ingegeven_samenstellingen', 'HandelsProduktKode_HPK_HPKODE'
 EXEC dbo.CreateIndexForTableField 'BST715T_Generieke_samenstellingen', 'GSK_code_GSKODE'
 EXEC dbo.CreateIndexForTableField 'BST500T_Informatorium_groepen', 'Groepkode_GRPINP'
+EXEC dbo.CreateIndexForTableField 'BST800T_ATCDDD_gegevens', 'ATC_code_ATCODE'
 
 SELECT * FROM sys.indexes i WHERE SUBSTRING(i.name, 1, 3) = 'IX_'
