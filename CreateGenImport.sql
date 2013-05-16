@@ -117,9 +117,7 @@ SELECT DISTINCT
 	dbo.GetRoute(btgp.Toedieningsweg_code_GPKTWG) [Route],
 	btvgi.PRK_code_PRKODE PRK,
 	CAST(btvgi.HPK_grootte_algemeen_HPGALG AS float) / 100 PrescriptionQty,
-	dbo.GetName(btvp.Naamnummer_prescriptie_product_PRNMNR) PrescriptionName
-
-INTO dbo.GStandDb
+	dbo.GetName(btvp.Naamnummer_prescriptie_product_PRNMNR) PrescriptionName INTO dbo.GStandDb
 FROM GStandDb.dbo.BST711T_Generieke_producten btgp
 JOIN GStandDb.dbo.BST715T_Generieke_samenstellingen btgs
 	ON btgs.GSK_code_GSKODE = btgp.GSK_code_GSKODE AND btgs.Aanduiding_werkzaamhulpstof_WH_GNMWHS = 'W'
@@ -133,12 +131,18 @@ JOIN GStandDb.dbo.BST701T_Ingegeven_samenstellingen btis
 	ON bth.HandelsProduktKode_HPK_HPKODE = btis.HandelsProduktKode_HPK_HPKODE AND btis.Aanduiding_werkzaamhulpstof_WH_GNMWHS = 'W'
 JOIN GStandDb.dbo.BST750T_Generieke_namen btgn
 	ON btis.GeneriekeNaamKode_GNK_GNGNK = btgn.GeneriekeNaamKode_GNK_GNGNK
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag ON btag.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1))
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag1 ON btag1.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1)) 
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag2 ON btag2.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 3)) 
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag3 ON btag3.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 4)) 
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag4 ON btag4.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 5)) 
-JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag5 ON btag5.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 8)) 
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag
+	ON btag.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag1
+	ON btag1.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 1))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag2
+	ON btag2.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 3))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag3
+	ON btag3.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 4))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag4
+	ON btag4.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 5))
+JOIN GStandDb.dbo.BST800T_ATCDDD_gegevens btag5
+	ON btag5.ATC_code_ATCODE = (SUBSTRING(btgp.ATC_code_ATCODE, 1, 8))
 
 WHERE btgp.Mutatiekode_MUTKOD != '1' AND
 btis.Mutatiekode_MUTKOD != '1' AND
@@ -146,4 +150,4 @@ btgn.Mutatiekode_MUTKOD != '1' AND
 btvp.Mutatiekode_MUTKOD != '1' AND
 bth.Mutatiekode_MUTKOD != '1'
 AND NOT dbo.GetShape(btgp.Farmaceutische_vorm_code_GPKTVR) = 'NIET VAN TOEPASSING'
-ORDER BY AnatomicalMain, TherapeuticMain, TherapeuticSub, Pharmacological, Substance, Shape, [ROUTE], GenericProductName, PrescriptionName, TradeName
+ORDER BY AnatomicalMain, TherapeuticMain, TherapeuticSub, Pharmacological, Substance, Shape, [Route], GenericProductName, PrescriptionName, TradeName
